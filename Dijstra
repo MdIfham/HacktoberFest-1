@@ -1,0 +1,98 @@
+#include<bits/stdc++.h> 
+using namespace std;
+
+#define ll long long
+#define lli long long int
+#define ld long double
+#define pb push_back
+
+ll mod = 1e9 + 7;
+
+int shortest, N;
+vector<vector<int>> dp;
+unordered_map<int, unordered_map<int, int>> mp;
+
+int dfs(int node, int dist, vector<bool>& vis, vector<int> adj[]) {
+    if(node == N-1) {
+        return (dist == shortest);
+    }
+
+    if(dp[node][dist] != -1) {
+        return dp[node][dist];
+    }
+
+    vis[node] = 1;
+    int cnt = 0;
+
+    for (auto &i: adj[node]) {
+        if (!vis[i]) {
+            cnt += dfs(i, dist + mp[node][i], vis, adj);
+        }
+    }        
+    
+    vis[node] = 0;
+    return dp[node][dist] = cnt;
+}
+
+int countPaths(int n, vector<vector<int>>& roads) {
+    N = n;
+    dp = vector<vector<int>> (201, vector<int>(1e5 , -1));
+    vector<int> adj[n];
+
+    for(auto &it: roads) {
+        adj[it[0]].push_back(it[1]);
+        adj[it[1]].push_back(it[0]);
+        mp[it[0]][it[1]] = it[2];
+        mp[it[1]][it[0]] = it[2];
+    }
+
+    vector<int> distTo(n, INT32_MAX);
+    priority_queue<pair<int,int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    // a minimum priority queue
+    pq.push({0, 0});
+
+    while(!pq.empty()) {
+        auto p = pq.top();  pq.pop();
+
+        int distTill = p.first;
+        int u = p.second;
+        for(auto &v: adj[u]) {
+            if(distTill + mp[u][v] < distTo[v]) {
+                distTo[v] = distTill + mp[u][v];
+                pq.push({distTo[v], v});
+            }
+        }
+    }
+
+    // distTo has all the shortest paths
+    shortest = distTo[n-1];
+
+    vector<bool> vis(n, 0);
+    return dfs(0, 0, vis, adj);
+}
+
+
+// CODE START
+
+
+void solveITcaptain() {
+    long long int copy;
+
+}
+
+
+// CODE END
+
+
+int main() {
+    system("cls");
+    ios_base::sync_with_stdio(false);    cin.tie(nullptr);     cout.tie(nullptr);
+    int t = 1;
+    cin >> t;
+    while (t--) {
+        solveITcaptain();
+    }
+    return 0;
+}
+
+
